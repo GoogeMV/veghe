@@ -1,0 +1,31 @@
+# One server and two probe agents. On a single host the "regions" are only
+# names; in a real deployment each agent runs in a different network or cloud
+# region and needs nothing but outbound HTTPS to the server.
+services:
+  server:
+    build: .
+    ports: ["8080:8080"]
+    environment:
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?set ADMIN_TOKEN}
+      PROBE_TOKENS: eu-west:${EU_WEST_TOKEN:?set EU_WEST_TOKEN},us-east:${US_EAST_TOKEN:?set US_EAST_TOKEN}
+      LOCAL_REGION: origin
+    volumes: ["veghe-data:/app/data"]
+
+  agent-eu-west:
+    build: .
+    command: ["node", "dist/agent.js"]
+    environment:
+      SERVER_URL: http://server:8080
+      PROBE_TOKEN: ${EU_WEST_TOKEN}
+    depends_on: [server]
+
+  agent-us-east:
+    build: .
+    command: ["node", "dist/agent.js"]
+    environment:
+      SERVER_URL: http://server:8080
+      PROBE_TOKEN: ${US_EAST_TOKEN}
+    depends_on: [server]
+
+volumes:
+  veghe-data:

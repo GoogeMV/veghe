@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>veghe · status</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">veghe</span>
+        <span class="brand-sub">status</span>
+      </a>
+      <div class="top-right">
+        <span id="live" class="live" data-state="connecting">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="live-text">connecting</span>
+        </span>
+        <button id="manage-open" class="btn ghost" type="button">Manage</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="banner" class="banner" data-overall="unknown" aria-live="polite">
+        <span class="banner-icon" aria-hidden="true"></span>
+        <div>
+          <h1 id="banner-title">Loading…</h1>
+          <p id="banner-sub"></p>
+        </div>
+      </section>
+
+      <section aria-labelledby="monitors-heading">
+        <h2 id="monitors-heading" class="section-title">Monitors</h2>
+        <div id="monitors" class="monitors"></div>
+      </section>
+
+      <section aria-labelledby="incidents-heading">
+        <h2 id="incidents-heading" class="section-title">Incident history</h2>
+        <ol id="incidents" class="incidents"></ol>
+      </section>
+    </main>
+
+    <footer class="foot">
+      A monitor is marked down only when a majority of probe regions agree. Uptime is the share of
+      successful checks across all regions.
+    </footer>
+
+    <dialog id="manage" class="dialog">
+      <div class="dialog-head">
+        <h2>Manage monitors</h2>
+        <button id="manage-close" class="btn ghost" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <label class="field">
+        <span>Admin token</span>
+        <input id="token" type="password" autocomplete="off" placeholder="ADMIN_TOKEN from .env" />
+      </label>
+      <p id="admin-error" class="error" role="alert" hidden></p>
+
+      <form id="add-form" class="add-form">
+        <label class="field">
+          <span>Name</span>
+          <input name="name" required maxlength="80" placeholder="Public API" />
+        </label>
+        <label class="field">
+          <span>Target <em>(https://…, tcp://host:port or tls://host)</em></span>
+          <input name="url" required placeholder="https://example.com/health" />
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>Every (seconds)</span>
+            <input name="intervalSeconds" type="number" min="10" max="86400" value="60" required />
+          </label>
+          <label class="field">
+            <span>Down after (failures)</span>
+            <input name="failureThreshold" type="number" min="1" max="10" value="2" required />
+          </label>
+        </div>
+        <label class="field">
+          <span>Must contain <em>(optional)</em></span>
+          <input name="keyword" maxlength="200" placeholder="&quot;status&quot;:&quot;ok&quot;" />
+        </label>
+        <label class="field">
+          <span>Incident webhook <em>(optional)</em></span>
+          <input name="webhookUrl" type="url" placeholder="https://hooks.example.com/…" />
+        </label>
+        <button class="btn primary" type="submit">Add monitor</button>
+      </form>
+
+      <ul id="admin-list" class="admin-list"></ul>
+
+      <h3 class="dialog-sub">Probes</h3>
+      <p class="hint">
+        Each probe checks every monitor from its own location. A monitor is down only when most
+        regions agree.
+      </p>
+      <ul id="probe-list" class="admin-list"></ul>
+      <form id="probe-form" class="probe-form">
+        <input
+          name="region"
+          required
+          pattern="[a-z0-9][a-z0-9\-]{0,31}"
+          placeholder="eu-west"
+          aria-label="Region name"
+        />
+        <button class="btn" type="submit">Add probe</button>
+      </form>
+      <p id="probe-token" class="token-once" hidden></p>
+    </dialog>
+
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

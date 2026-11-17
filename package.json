@@ -1,0 +1,38 @@
+{
+  "name": "veghe",
+  "version": "2.0.0",
+  "description": "A distributed uptime monitor with a live public status page: probe agents in several regions, quorum before an incident opens, HTTP/TCP/TLS checks, 90-day history, SSE updates.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "start": "node dist/server.js",
+    "agent": "tsx --env-file-if-exists=.env src/agent.ts",
+    "demo:agents": "tsx --env-file-if-exists=.env scripts/demo-agents.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src tests scripts public",
+    "lint:fix": "biome check --write src tests scripts public",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "seed": "tsx --env-file-if-exists=.env scripts/seed.ts"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/rate-limit": "^11.2.2",
+    "@fastify/static": "^10.1.11",
+    "@fastify/type-provider-typebox": "^6.3.0",
+    "@sinclair/typebox": "^0.34.52",
+    "better-sqlite3": "^13.2.0",
+    "fastify": "^5.12.8",
+    "nanoid": "^6.0.2",
+    "prom-client": "^15.1.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.8",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}
