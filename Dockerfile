@@ -1,5 +1,16 @@
+# better-sqlite3 has no prebuilt binary for every Node/musl combination, so
+# it may compile from source; only these two stages carry the toolchain.
+
+# --- production dependencies, compiled once ---
+FROM node:24-alpine AS deps
+RUN apk add --no-cache python3 make g++
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
 # --- build stage: compile TypeScript ---
 FROM node:24-alpine AS build
+RUN apk add --no-cache python3 make g++
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -12,7 +23,7 @@ FROM node:24-alpine
 WORKDIR /app
 ENV NODE_ENV=production PORT=8080
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY public ./public
 # Run as the unprivileged user that ships with the node image.
